@@ -49,7 +49,7 @@
         </p>
 
         <div class="flex space-x-4 mb-16">
-            <button onclick="navigateTo('chat')" class="bg-emerald-500 hover:bg-emerald-600 text-black font-bold px-8 py-3 rounded-lg flex items-center space-x-2 transition transform hover:scale-105">
+            <button onclick="navigateTo('chat')" class="bg-emerald-500 hover:bg-emerald-600 text-black font-bold px-8 py-3 rounded-lg flex items-center space-x-2 transition transform active:scale-95">
                 <i class="fas fa-comment"></i>
                 <span>Launch AI Consultation</span>
             </button>
@@ -79,21 +79,21 @@
                 <i class="fas fa-robot text-emerald-400 text-2xl mb-6"></i>
                 <h3 class="text-xl font-bold mb-4">AI-Driven Care</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                    [span_2](start_span)Instant, conversational ordering and personalized health advice based on patient history[span_2](end_span).
+                    Instant, conversational ordering and personalized health advice based on patient history.
                 </p>
             </div>
             <div class="glass p-10 rounded-3xl group hover:border-emerald-500/30 transition">
                 <i class="fas fa-lock text-emerald-400 text-2xl mb-6"></i>
                 <h3 class="text-xl font-bold mb-4">Intelligent Protection</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                    [span_3](start_span)Strict policy enforcement using master data as the source of truth[span_3](end_span).
+                    Strict policy enforcement using master data as the source of truth.
                 </p>
             </div>
             <div class="glass p-10 rounded-3xl group hover:border-emerald-500/30 transition">
                 <i class="fas fa-clock text-emerald-400 text-2xl mb-6"></i>
                 <h3 class="text-xl font-bold mb-4">Proactive Wellness</h3>
                 <p class="text-gray-400 text-sm leading-relaxed">
-                    [span_4](start_span)Automated refill reminders and predictive health management[span_4](end_span).
+                    Automated refill reminders and predictive health management.
                 </p>
             </div>
         </div>
@@ -110,7 +110,22 @@
         </p>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script>
+        function navigateTo(feature) {
+            // Get the current URL path to handle GitHub subdirectories
+            const path = window.location.pathname;
+            const directory = path.substring(0, path.lastIndexOf('/') + 1);
+
+            if (feature === 'chat') {
+                window.location.href = directory + 'chat.html';
+            } else if (feature === 'admin') {
+                window.location.href = directory + 'admin.html';
+            } else if (feature === 'logs') {
+                // Mandatory Trace Link for Judges
+                window.open('https://smith.langchain.com/', '_blank'); 
+            }
+        }
+    </script>
 </body>
 </html>
 
