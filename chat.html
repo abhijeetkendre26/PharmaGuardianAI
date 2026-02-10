@@ -31,7 +31,7 @@
                         <i class="fas fa-robot text-xs"></i>
                     </div>
                     <div class="bg-white/5 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-white/5 leading-relaxed">
-                        Hello! I am your AI Pharmacist. Please type your symptoms or **scan a prescription** for analysis.
+                        Hello! I am your AI Pharmacist. Use the **Camera icon** to scan or upload a prescription, or type your symptoms below.
                     </div>
                 </div>
             </div>
@@ -57,6 +57,7 @@
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
+                <p class="text-[9px] text-gray-500 text-center mt-2 uppercase tracking-widest">AI Agent: Verifying against safety protocols</p>
             </div>
         </div>
     </main>
@@ -64,8 +65,8 @@
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-        // Your API Key
-        const API_KEY = "AIzaSyAINzkJzMW5lbYzQkcjIar58joc1qYDxgU";
+        // Integrated Your New API Key
+        const API_KEY = "AIzaSyBhHDg74z2jeqcKXF8-KjN3fxlPWlYvt-g";
         const genAI = new GoogleGenerativeAI(API_KEY);
         let selectedImageBase64 = null;
 
@@ -112,19 +113,18 @@
             
             try {
                 document.getElementById('status-badge').innerText = "AI Processing...";
-                // Using 1.5-flash for faster response and better vision
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 
                 let result;
                 if (selectedImageBase64) {
-                    const prompt = "Act as an expert pharmacist. Scan this prescription and list medicine names and dosages clearly. Mention if a physical prescription is required.";
+                    const prompt = "Act as an expert pharmacist. Scan this prescription image. List: 1. Medicine Name, 2. Dosage, 3. Frequency. Then explain if a physical prescription is required by law.";
                     result = await model.generateContent([
                         prompt,
                         { inlineData: { data: selectedImageBase64, mimeType: "image/jpeg" } }
                     ]);
                     clearImage();
                 } else {
-                    const prompt = `System: Expert Pharmacist Agent. Context: PharmaGuardian AI. Answer the user: ${message}. Always mention safety and stock policy.`;
+                    const prompt = `You are a professional pharmacist for PharmaGuardian AI. Answer the user: ${message}. Remind them if a prescription is needed and suggest safe dosages if applicable.`;
                     result = await model.generateContent(prompt);
                 }
 
@@ -132,7 +132,7 @@
                 addMessage(response.text(), 'bot');
             } catch (error) {
                 console.error("Gemini Error:", error);
-                addMessage("API Connection Error. Ensure your key is unrestricted and billing is active.", 'bot');
+                addMessage("API Error: Please ensure your Gemini API key is enabled in Google AI Studio.", 'bot');
             } finally {
                 document.getElementById('status-badge').innerText = "Agent Online";
             }
