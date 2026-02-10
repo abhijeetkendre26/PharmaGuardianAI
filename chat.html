@@ -15,49 +15,48 @@
 </head>
 <body class="hero-gradient text-white font-sans min-h-screen flex flex-col">
 
-    <nav class="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
-        <a href="index.html" class="flex items-center space-x-2 text-xl font-bold">
+    <nav class="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto w-full">
+        <a href="index.html" class="flex items-center space-x-2 text-lg font-bold">
             <i class="fas fa-arrow-left text-sm"></i>
-            <span>PharmaGuardian <span class="text-emerald-400">AI</span></span>
+            <span>PharmaGuardian <span class="text-emerald-500">AI</span></span>
         </a>
-        <span id="status-badge" class="text-[10px] uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Pharmacist Online</span>
+        <span id="status-badge" class="text-[10px] uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Agent Online</span>
     </nav>
 
-    <main class="flex-grow flex flex-col items-center justify-center px-4 pb-8">
-        <div class="w-full max-w-2xl glass rounded-3xl flex flex-col h-[75vh] overflow-hidden shadow-2xl">
+    <main class="flex-grow flex flex-col items-center justify-center px-4 pb-6">
+        <div class="w-full max-w-2xl glass rounded-3xl flex flex-col h-[80vh] overflow-hidden shadow-2xl">
             <div id="chat-window" class="flex-grow p-6 overflow-y-auto space-y-4 text-sm">
                 <div class="flex items-start space-x-3">
-                    <div class="bg-emerald-400 h-8 w-8 rounded-full flex items-center justify-center text-black shrink-0">
+                    <div class="bg-emerald-500 h-8 w-8 rounded-full flex items-center justify-center text-black shrink-0">
                         <i class="fas fa-robot text-xs"></i>
                     </div>
                     <div class="bg-white/5 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-white/5 leading-relaxed">
-                        Hello! I am your AI Pharmacist. Please type your symptoms or **upload/capture a prescription photo** for analysis.
+                        Hello! I am your AI Pharmacist. Please type your symptoms or **scan a prescription** for analysis.
                     </div>
                 </div>
             </div>
 
-            <div id="image-preview-container" class="hidden px-6 py-2 bg-emerald-500/5 border-t border-emerald-500/20">
+            <div id="image-preview-container" class="hidden px-6 py-2 bg-emerald-500/10 border-t border-emerald-500/20">
                 <div class="relative inline-block">
-                    <img id="image-preview" src="" class="h-20 w-20 object-cover rounded-lg border border-emerald-500/50">
-                    <button onclick="clearImage()" class="absolute -top-2 -right-2 bg-red-500 rounded-full h-5 w-5 text-[10px] flex items-center justify-center"><i class="fas fa-times"></i></button>
+                    <img id="image-preview" src="" class="h-16 w-16 object-cover rounded-lg border border-emerald-500">
+                    <button onclick="clearImage()" class="absolute -top-2 -right-2 bg-red-500 rounded-full h-5 w-5 text-white text-[10px] flex items-center justify-center"><i class="fas fa-times"></i></button>
                 </div>
             </div>
 
             <div class="p-4 border-t border-white/10 bg-black/40">
-                <div class="flex items-center space-x-2 bg-white/5 rounded-2xl p-2 border border-white/10 focus-within:border-emerald-400/50 transition">
+                <div class="flex items-center space-x-2 bg-white/5 rounded-2xl p-2 border border-white/10 focus-within:border-emerald-500/50 transition">
                     
                     <button onclick="document.getElementById('file-input').click()" class="text-gray-400 hover:text-emerald-400 p-2 transition">
                         <i class="fas fa-camera text-lg"></i>
                     </button>
                     <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewImage(event)">
                     
-                    <input type="text" id="user-input" placeholder="Type symptoms or medicine..." class="bg-transparent flex-grow outline-none text-white text-sm py-2 px-2">
+                    <input type="text" id="user-input" placeholder="Type symptoms or medicine..." class="bg-transparent flex-grow outline-none text-white text-sm py-2 px-1">
                     
-                    <button id="send-btn" class="bg-emerald-400 hover:bg-emerald-500 text-black h-10 w-10 rounded-xl flex items-center justify-center transition shadow-lg shadow-emerald-400/20">
+                    <button id="send-btn" class="bg-emerald-500 hover:bg-emerald-600 text-black h-10 w-10 rounded-xl flex items-center justify-center transition shadow-lg shadow-emerald-500/20">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
-                <p class="text-[9px] text-gray-400 text-center mt-3 uppercase tracking-tighter">AI Analysis: Verifying against Safety & Policy Master Data</p>
             </div>
         </div>
     </main>
@@ -65,11 +64,11 @@
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
+        // Your API Key
         const API_KEY = "AIzaSyAINzkJzMW5lbYzQkcjIar58joc1qYDxgU";
         const genAI = new GoogleGenerativeAI(API_KEY);
         let selectedImageBase64 = null;
 
-        // UI Helpers
         window.previewImage = function(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -93,49 +92,52 @@
             const div = document.createElement('div');
             div.className = `flex items-start space-x-3 ${sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`;
             div.innerHTML = `
-                <div class="${sender === 'bot' ? 'bg-emerald-400 text-black' : 'bg-emerald-600 text-white'} h-8 w-8 rounded-full flex items-center justify-center shrink-0">
+                <div class="${sender === 'bot' ? 'bg-emerald-500 text-black' : 'bg-emerald-800 text-white'} h-8 w-8 rounded-full flex items-center justify-center shrink-0">
                     <i class="fas fa-${sender === 'bot' ? 'robot' : 'user'} text-xs"></i>
                 </div>
-                <div class="${sender === 'bot' ? 'bg-white/5' : 'bg-emerald-400/20'} p-4 rounded-2xl ${sender === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none'} max-w-[85%] border border-white/5 shadow-sm">
+                <div class="${sender === 'bot' ? 'bg-white/5' : 'bg-emerald-500/20'} p-4 rounded-2xl ${sender === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none'} max-w-[85%] border border-white/5">
                     ${text}
                 </div>`;
             chatWindow.appendChild(div);
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // Logic for Send Button
         async function handleSend() {
             const input = document.getElementById('user-input');
             const message = input.value.trim();
             if (!message && !selectedImageBase64) return;
 
-            addMessage(message || "Processing image...", 'user');
+            addMessage(message || "Analyzing image...", 'user');
             input.value = '';
             
             try {
-                document.getElementById('status-badge').innerText = "AI is thinking...";
+                document.getElementById('status-badge').innerText = "AI Processing...";
+                // Using 1.5-flash for faster response and better vision
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                
                 let result;
-
                 if (selectedImageBase64) {
-                    const prompt = "Analyze this prescription. Extract medicine names, dosage, and frequency. Remind user about safety rules.";
-                    result = await model.generateContent([prompt, { inlineData: { data: selectedImageBase64, mimeType: "image/jpeg" } }]);
+                    const prompt = "Act as an expert pharmacist. Scan this prescription and list medicine names and dosages clearly. Mention if a physical prescription is required.";
+                    result = await model.generateContent([
+                        prompt,
+                        { inlineData: { data: selectedImageBase64, mimeType: "image/jpeg" } }
+                    ]);
                     clearImage();
                 } else {
-                    const prompt = `You are a professional pharmacist. User asks: ${message}. Remind them if prescription is required.`;
+                    const prompt = `System: Expert Pharmacist Agent. Context: PharmaGuardian AI. Answer the user: ${message}. Always mention safety and stock policy.`;
                     result = await model.generateContent(prompt);
                 }
 
                 const response = await result.response;
                 addMessage(response.text(), 'bot');
             } catch (error) {
-                addMessage("Connection error. Check API key.", 'bot');
+                console.error("Gemini Error:", error);
+                addMessage("API Connection Error. Ensure your key is unrestricted and billing is active.", 'bot');
             } finally {
-                document.getElementById('status-badge').innerText = "Pharmacist Online";
+                document.getElementById('status-badge').innerText = "Agent Online";
             }
         }
 
-        // Connect functions to buttons
         document.getElementById('send-btn').addEventListener('click', handleSend);
         document.getElementById('user-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
     </script>
