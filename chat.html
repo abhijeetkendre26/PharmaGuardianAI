@@ -18,22 +18,20 @@
     <nav class="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
         <a href="index.html" class="flex items-center space-x-2 text-xl font-bold">
             <i class="fas fa-arrow-left text-sm"></i>
-            <span>PharmaGuardian <span class="text-emerald-500">AI</span></span>
+            <span>PharmaGuardian <span class="text-emerald-400">AI</span></span>
         </a>
-        <div class="flex items-center space-x-3">
-            <span id="status-badge" class="text-[10px] uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Pharmacist Online</span>
-        </div>
+        <span id="status-badge" class="text-[10px] uppercase tracking-widest text-emerald-500 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Pharmacist Online</span>
     </nav>
 
     <main class="flex-grow flex flex-col items-center justify-center px-4 pb-8">
         <div class="w-full max-w-2xl glass rounded-3xl flex flex-col h-[75vh] overflow-hidden shadow-2xl">
             <div id="chat-window" class="flex-grow p-6 overflow-y-auto space-y-4 text-sm">
                 <div class="flex items-start space-x-3">
-                    <div class="bg-emerald-500 h-8 w-8 rounded-full flex items-center justify-center text-black shrink-0">
+                    <div class="bg-emerald-400 h-8 w-8 rounded-full flex items-center justify-center text-black shrink-0">
                         <i class="fas fa-robot text-xs"></i>
                     </div>
                     <div class="bg-white/5 p-4 rounded-2xl rounded-tl-none max-w-[85%] border border-white/5 leading-relaxed">
-                        Hello! I am your AI Pharmacist. Please type your symptoms or **upload a prescription photo** for analysis.
+                        Hello! I am your AI Pharmacist. Please type your symptoms or **upload/capture a prescription photo** for analysis.
                     </div>
                 </div>
             </div>
@@ -46,19 +44,20 @@
             </div>
 
             <div class="p-4 border-t border-white/10 bg-black/40">
-                <div class="flex items-center space-x-2 bg-white/5 rounded-2xl p-2 border border-white/10 focus-within:border-emerald-500/50 transition shadow-inner">
-                    <button onclick="document.getElementById('file-input').click()" class="text-gray-400 hover:text-emerald-400 p-2 transition" title="Scan Prescription">
+                <div class="flex items-center space-x-2 bg-white/5 rounded-2xl p-2 border border-white/10 focus-within:border-emerald-400/50 transition">
+                    
+                    <button onclick="document.getElementById('file-input').click()" class="text-gray-400 hover:text-emerald-400 p-2 transition">
                         <i class="fas fa-camera text-lg"></i>
                     </button>
                     <input type="file" id="file-input" accept="image/*" class="hidden" onchange="previewImage(event)">
                     
                     <input type="text" id="user-input" placeholder="Type symptoms or medicine..." class="bg-transparent flex-grow outline-none text-white text-sm py-2 px-2">
                     
-                    <button id="send-btn" onclick="handleSend()" class="bg-emerald-500 hover:bg-emerald-600 text-black h-10 w-10 rounded-xl flex items-center justify-center transition shadow-lg shadow-emerald-500/20">
+                    <button id="send-btn" class="bg-emerald-400 hover:bg-emerald-500 text-black h-10 w-10 rounded-xl flex items-center justify-center transition shadow-lg shadow-emerald-400/20">
                         <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
-                <p class="text-[9px] text-gray-500 text-center mt-3 uppercase tracking-tighter">AI Analysis Active: Verifying against Medicine Master Data</p>
+                <p class="text-[9px] text-gray-400 text-center mt-3 uppercase tracking-tighter">AI Analysis: Verifying against Safety & Policy Master Data</p>
             </div>
         </div>
     </main>
@@ -70,18 +69,10 @@
         const genAI = new GoogleGenerativeAI(API_KEY);
         let selectedImageBase64 = null;
 
-        [span_3](start_span)// Configuration for "Expert Pharmacist" Persona[span_3](end_span)
-        const generationConfig = {
-            temperature: 0.7,
-            topP: 0.95,
-            topK: 40,
-            maxOutputTokens: 1024,
-        };
-
+        // UI Helpers
         window.previewImage = function(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
             const reader = new FileReader();
             reader.onload = function(e) {
                 selectedImageBase64 = e.target.result.split(',')[1];
@@ -97,75 +88,57 @@
             document.getElementById('image-preview-container').classList.add('hidden');
         };
 
+        function addMessage(text, sender) {
+            const chatWindow = document.getElementById('chat-window');
+            const div = document.createElement('div');
+            div.className = `flex items-start space-x-3 ${sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`;
+            div.innerHTML = `
+                <div class="${sender === 'bot' ? 'bg-emerald-400 text-black' : 'bg-emerald-600 text-white'} h-8 w-8 rounded-full flex items-center justify-center shrink-0">
+                    <i class="fas fa-${sender === 'bot' ? 'robot' : 'user'} text-xs"></i>
+                </div>
+                <div class="${sender === 'bot' ? 'bg-white/5' : 'bg-emerald-400/20'} p-4 rounded-2xl ${sender === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none'} max-w-[85%] border border-white/5 shadow-sm">
+                    ${text}
+                </div>`;
+            chatWindow.appendChild(div);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Logic for Send Button
         async function handleSend() {
             const input = document.getElementById('user-input');
-            const chatWindow = document.getElementById('chat-window');
             const message = input.value.trim();
-
             if (!message && !selectedImageBase64) return;
 
-            // Add User Message to UI
-            addMessage(message || "Analyzing uploaded prescription...", 'user');
+            addMessage(message || "Processing image...", 'user');
             input.value = '';
-
+            
             try {
                 document.getElementById('status-badge').innerText = "AI is thinking...";
-                
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 let result;
 
                 if (selectedImageBase64) {
-                    [span_4](start_span)// Vision Prompt for Prescriptions[span_4](end_span)
-                    const prompt = "You are an expert pharmacist. Analyze this prescription image. Extract: 1. Medicine Name, 2. Dosage, 3. Frequency. If it is not a prescription, say so. Remind the user about safety rules.";
-                    result = await model.generateContent([
-                        prompt,
-                        { inlineData: { data: selectedImageBase64, mimeType: "image/jpeg" } }
-                    ]);
+                    const prompt = "Analyze this prescription. Extract medicine names, dosage, and frequency. Remind user about safety rules.";
+                    result = await model.generateContent([prompt, { inlineData: { data: selectedImageBase64, mimeType: "image/jpeg" } }]);
                     clearImage();
                 } else {
-                    [span_5](start_span)// Conversational Prompt[span_5](end_span)
-                    const prompt = `You are a professional pharmacist agent for PharmaGuardian AI. 
-                    1. [span_6](start_span)If the user asks for medicine, ask for dosage and quantity[span_6](end_span). 
-                    2. [span_7](start_span)Remind them if a prescription is required[span_7](end_span). 
-                    3. Be concise and empathetic. 
-                    User: ${message}`;
+                    const prompt = `You are a professional pharmacist. User asks: ${message}. Remind them if prescription is required.`;
                     result = await model.generateContent(prompt);
                 }
 
                 const response = await result.response;
                 addMessage(response.text(), 'bot');
             } catch (error) {
-                addMessage("Error connecting to Gemini. Please check your API key or network.", 'bot');
-                console.error(error);
+                addMessage("Connection error. Check API key.", 'bot');
             } finally {
                 document.getElementById('status-badge').innerText = "Pharmacist Online";
             }
         }
 
-        function addMessage(text, sender) {
-            const chatWindow = document.getElementById('chat-window');
-            const div = document.createElement('div');
-            div.className = `flex items-start space-x-3 ${sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`;
-            
-            div.innerHTML = `
-                <div class="${sender === 'bot' ? 'bg-emerald-500 text-black' : 'bg-blue-500 text-white'} h-8 w-8 rounded-full flex items-center justify-center shrink-0">
-                    <i class="fas fa-${sender === 'bot' ? 'robot' : 'user'} text-xs"></i>
-                </div>
-                <div class="${sender === 'bot' ? 'bg-white/5' : 'bg-emerald-500/20'} p-4 rounded-2xl ${sender === 'bot' ? 'rounded-tl-none' : 'rounded-tr-none'} max-w-[85%] border border-white/5 leading-relaxed shadow-sm">
-                    ${text}
-                </div>
-            `;
-            chatWindow.appendChild(div);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        // Attach click listener to button
-        window.handleSend = handleSend;
-        
-        // Handle Enter Key
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
+        // Connect functions to buttons
+        document.getElementById('send-btn').addEventListener('click', handleSend);
+        document.getElementById('user-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
     </script>
 </body>
 </html>
+
