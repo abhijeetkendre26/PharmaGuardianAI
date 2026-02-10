@@ -12,6 +12,7 @@
             --text-gray: #8892b0;
             --white: #e6f1ff;
             --error: #ff4d4d;
+            --success: #4ade80;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,7 +32,7 @@
         .tagline-box h2 { font-size: 1.8rem; color: var(--primary); margin: 0; }
         .tagline-box p { font-size: 0.9rem; color: var(--text-gray); font-style: italic; }
 
-        /* Hero */
+        /* Hero Section */
         .hero {
             height: 100vh;
             display: flex;
@@ -43,7 +44,7 @@
         }
         .hero-content h1 { font-size: 3.5rem; max-width: 600px; }
 
-        /* Popup Overlay */
+        /* Auth Overlay */
         #authOverlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -90,11 +91,14 @@
         .btn-frozen { background: #233554; color: #555; cursor: not-allowed; }
         
         .error-msg { color: var(--error); font-size: 0.75rem; display: none; margin-bottom: 5px; }
-        .verified-msg { color: #4ade80; font-size: 0.75rem; display: none; margin-bottom: 5px; }
+        .verified-msg { color: var(--success); font-size: 0.75rem; display: none; margin-bottom: 5px; }
 
         .phone-input-container { position: relative; display: flex; align-items: center; }
         .prefix { position: absolute; left: 12px; color: var(--text-gray); font-size: 0.9rem; pointer-events: none; }
         .phone-input { padding-left: 45px !important; }
+
+        .timer-text { font-size: 0.8rem; color: var(--text-gray); margin-top: 5px; text-align: center; }
+        .resend-link { color: var(--primary); cursor: pointer; text-decoration: underline; display: none; }
     </style>
 </head>
 <body>
@@ -116,6 +120,7 @@
     </section>
 
     <div id="authOverlay">
+        
         <div class="auth-card" id="card-init">
             <h2 style="color: var(--primary);">Welcome</h2>
             <p style="margin-bottom: 20px;">Safer Medicines, Smarter Lives.</p>
@@ -143,7 +148,7 @@
                     <span class="prefix">+91</span>
                     <input type="text" id="li-mob" class="phone-input" placeholder="10 Digit Number" inputmode="numeric" oninput="valPhone(this, 'li-mob-err'); valLogin()">
                 </div>
-                <p id="li-mob-err" class="error-msg">Please enter a valid 10-digit number</p>
+                <p id="li-mob-err" class="error-msg">Enter valid 10-digit number</p>
                 <input type="password" id="li-mpass" placeholder="Password" oninput="valLogin()">
                 <p style="font-size: 0.8rem; color: var(--primary); cursor: pointer; margin-top: 5px;" onclick="navTo('card-otp-login')">Login without password?</p>
             </div>
@@ -158,34 +163,50 @@
                 <input type="text" id="otp-mob" class="phone-input" placeholder="Mobile Number" inputmode="numeric" oninput="valPhone(this, 'otp-mob-err')">
             </div>
             <p id="otp-mob-err" class="error-msg">Enter valid 10-digit number</p>
-            <button class="btn-main" style="width: 100%; margin: 10px 0;" onclick="showOtpField()">Generate OTP</button>
+            <button id="gen-otp-btn" class="btn-main" style="width: 100%; margin: 10px 0;" onclick="startOtpProcess()">Generate OTP</button>
             
             <div id="otp-entry" class="hidden">
-                <input type="text" placeholder="Enter 6-digit OTP" maxlength="6">
-                <button class="btn-main" style="width: 100%;" onclick="location.reload()">Verify & Login</button>
+                <input type="text" id="otp-val" placeholder="Enter 6-digit OTP" maxlength="6" oninput="valOtpInput()">
+                <div class="timer-text" id="otp-timer-box">Resend OTP in: <span id="timer-sec">30</span>s</div>
+                <div class="timer-text"><span id="resend-btn" class="resend-link" onclick="startOtpProcess()">Resend OTP Now</span></div>
+                <button id="verify-login-btn" class="btn-frozen" disabled style="width: 100%; margin-top: 10px;" onclick="location.reload()">Verify & Login</button>
             </div>
         </div>
 
         <div class="auth-card hidden" id="card-signup">
             <span class="back-btn" onclick="navTo('card-init')"><i class="fas fa-arrow-left"></i> Back</span>
             <h3 style="margin-top: 20px;">Create Account</h3>
+            
             <div style="display: flex; gap: 8px;">
                 <input type="text" id="s-fn" placeholder="First Name" oninput="valSignup()">
                 <input type="text" id="s-ln" placeholder="Last Name" oninput="valSignup()">
             </div>
+
             <select id="s-gen" onchange="valSignup()">
-                <option value="">Gender</option><option>Male</option><option>Female</option>
+                <option value="">Select Gender</option>
+                <option>Male</option><option>Female</option><option>Other</option>
             </select>
+
             <div class="phone-input-container">
                 <span class="prefix">+91</span>
                 <input type="text" id="s-mob" class="phone-input" placeholder="Mobile No." inputmode="numeric" oninput="valPhone(this, 's-mob-err'); valSignup()">
-                <button id="s-vbtn" class="btn-main" style="flex:0; margin-left: 5px; font-size: 0.7rem; padding: 5px;" onclick="doVerify()">Verify</button>
+                <button id="s-vbtn" class="btn-main" style="flex:0; margin-left: 5px; font-size: 0.7rem; padding: 5px;" onclick="doVerify('mob')">Verify</button>
             </div>
             <p id="s-mob-err" class="error-msg">Invalid 10-digit number</p>
-            <p id="s-verified" class="verified-msg">Verified ✓</p>
+            <p id="s-mob-verified" class="verified-msg">Mobile Verified ✓</p>
 
-            <input type="text" id="s-uid" placeholder="User ID" oninput="valSignup()">
-            <input type="date" id="s-dob" oninput="valSignup()">
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <input type="email" id="s-email" placeholder="Enter Email ID" oninput="valEmail(); valSignup()">
+                <button id="e-vbtn" class="btn-main" style="flex:0; font-size: 0.7rem; padding: 12px 10px; margin: 8px 0;" onclick="doVerify('email')">Verify Email</button>
+            </div>
+            <p id="s-email-err" class="error-msg">Enter valid email address</p>
+            <p id="s-email-verified" class="verified-msg">Email Verified ✓</p>
+
+            <div style="text-align: left; margin-top: 5px;">
+                <label style="font-size: 0.8rem; color: var(--text-gray); margin-left: 5px;">Enter Date of Birth:</label>
+                <input type="date" id="s-dob" oninput="valSignup()">
+            </div>
+
             <input type="password" id="s-p1" placeholder="Password" oninput="valSignup()">
             <input type="password" id="s-p2" placeholder="Confirm Password" oninput="valSignup()">
             <p id="s-perr" class="error-msg">Passwords do not match!</p>
@@ -197,27 +218,31 @@
     <script>
         let currentLoginMode = '';
         let isPhoneVerified = false;
+        let isEmailVerified = false;
+        let timerInterval;
 
-        // 1. Navigation Logic (Back button support)
         function navTo(cardId) {
             document.querySelectorAll('.auth-card').forEach(c => c.classList.add('hidden'));
             document.getElementById(cardId).classList.remove('hidden');
+            clearInterval(timerInterval);
         }
 
-        // 2. Phone Validation Logic
         function valPhone(el, errorId) {
-            el.value = el.value.replace(/\D/g, ''); // Remove non-numeric
+            el.value = el.value.replace(/\D/g, ''); 
             if(el.value.length > 10) el.value = el.value.slice(0,10);
-            
             const errEl = document.getElementById(errorId);
-            if(el.value.length > 0 && el.value.length < 10) {
-                errEl.style.display = 'block';
-            } else {
-                errEl.style.display = 'none';
-            }
+            errEl.style.display = (el.value.length > 0 && el.value.length < 10) ? 'block' : 'none';
         }
 
-        // 3. Login Functions
+        function valEmail() {
+            const emailInput = document.getElementById('s-email');
+            const emailErr = document.getElementById('s-email-err');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValid = emailRegex.test(emailInput.value);
+            emailErr.style.display = (emailInput.value.length > 0 && !isValid) ? 'block' : 'none';
+            return isValid;
+        }
+
         function toggleLogin(mode) {
             currentLoginMode = mode;
             document.getElementById('login-email').classList.toggle('hidden', mode !== 'email');
@@ -237,32 +262,77 @@
             btn.className = valid ? 'btn-main' : 'btn-frozen';
         }
 
-        function showOtpField() {
-            if(document.getElementById('otp-mob').value.length === 10) {
+        // OTP Timer Logic
+        function startOtpProcess() {
+            const mob = document.getElementById('otp-mob').value;
+            if(mob.length === 10) {
                 document.getElementById('otp-entry').classList.remove('hidden');
+                document.getElementById('gen-otp-btn').classList.add('hidden');
+                startTimer(30);
             }
         }
 
-        // 4. Signup Functions
-        function doVerify() {
-            if(document.getElementById('s-mob').value.length === 10) {
-                document.getElementById('s-mob').disabled = true;
-                document.getElementById('s-vbtn').classList.add('hidden');
-                document.getElementById('s-verified').style.display = 'block';
-                isPhoneVerified = true;
-                valSignup();
+        function startTimer(seconds) {
+            clearInterval(timerInterval);
+            let timeLeft = seconds;
+            const timerBox = document.getElementById('otp-timer-box');
+            const resendLink = document.getElementById('resend-btn');
+            const timerSec = document.getElementById('timer-sec');
+
+            timerBox.style.display = 'block';
+            resendLink.style.display = 'none';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerSec.innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerBox.style.display = 'none';
+                    resendLink.style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        function valOtpInput() {
+            const val = document.getElementById('otp-val').value;
+            const btn = document.getElementById('verify-login-btn');
+            if(val.length === 6) {
+                btn.disabled = false;
+                btn.className = 'btn-main';
+            } else {
+                btn.disabled = true;
+                btn.className = 'btn-frozen';
             }
+        }
+
+        function doVerify(type) {
+            if (type === 'mob') {
+                const mob = document.getElementById('s-mob');
+                if (mob.value.length === 10) {
+                    mob.disabled = true;
+                    document.getElementById('s-vbtn').classList.add('hidden');
+                    document.getElementById('s-mob-verified').style.display = 'block';
+                    isPhoneVerified = true;
+                }
+            } else if (type === 'email') {
+                const mail = document.getElementById('s-email');
+                if (valEmail() && mail.value !== "") {
+                    mail.disabled = true;
+                    document.getElementById('e-vbtn').classList.add('hidden');
+                    document.getElementById('s-email-verified').style.display = 'block';
+                    isEmailVerified = true;
+                }
+            }
+            valSignup();
         }
 
         function valSignup() {
             const p1 = document.getElementById('s-p1').value;
             const p2 = document.getElementById('s-p2').value;
             document.getElementById('s-perr').style.display = (p1 && p2 && p1 !== p2) ? 'block' : 'none';
-
-            const ids = ['s-fn', 's-ln', 's-gen', 's-mob', 's-uid', 's-dob', 's-p1', 's-p2'];
+            const ids = ['s-fn', 's-ln', 's-gen', 's-mob', 's-email', 's-dob', 's-p1', 's-p2'];
             const allFilled = ids.every(id => document.getElementById(id).value !== "");
-            const valid = allFilled && (p1 === p2) && isPhoneVerified;
-
+            const valid = allFilled && (p1 === p2) && isPhoneVerified && isEmailVerified;
             const btn = document.getElementById('btn-signup');
             btn.disabled = !valid;
             btn.className = valid ? 'btn-main' : 'btn-frozen';
@@ -270,4 +340,3 @@
     </script>
 </body>
 </html>
-
