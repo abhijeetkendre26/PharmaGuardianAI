@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaGuardian AI | Safer Medicines</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-teal: #39b5a4;
+            --dark-blue: #0a192f;
+            --light-blue: #112240;
+            --text-gray: #8892b0;
+            --white: #e6f1ff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--dark-blue);
+            color: var(--white);
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(10, 25, 47, 0.9);
+            position: fixed;
+            width: 84%;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-container img {
+            height: 40px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-gray);
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-teal);
+        }
+
+        .btn-get-started {
+            background-color: var(--primary-teal);
+            color: white !important;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 8%;
+            background: linear-gradient(to right, rgba(10, 25, 47, 0.9), rgba(10, 25, 47, 0.2)), 
+                        url('hero-bg.jpg'); /* Replace with your hero image */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-main {
+            padding: 15px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-teal);
+            color: white;
+        }
+
+        .btn-secondary {
+            border: 2px solid var(--text-gray);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-teal);
+        }
+
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 300px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            color: #333;
+        }
+
+        .chat-header {
+            background: #f8f9fa;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .chat-header img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        .chat-input-area {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            background: #fff;
+        }
+
+        .chat-input-area input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        .chat-input-area i {
+            color: var(--primary-teal);
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo-container">
+            <img src="logo.png" alt="PharmaGuardian AI">
+        </div>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#features">Features</a>
+            <a href="#contact">Contact</a>
+            <a href="#" class="btn-get-started">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>AI That Thinks Like a Pharmacist.</h1>
+            <p>Protecting patients and optimizing pharmacy operations with intelligent agentic AI.</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn-main btn-primary">Get Started</a>
+                <a href="#" class="btn-main btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="chat-widget">
+        <div class="chat-header">
+            <img src="avatar.png" alt="AI Avatar"> <div>
+                <small style="color: #666; display: block;">How can I help you today?</small>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" placeholder="Ask me anything...">
+            <i class="fas fa-microphone"></i>
+        </div>
+    </div>
+
+</body>
+</html>
