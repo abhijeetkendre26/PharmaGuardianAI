@@ -24,8 +24,8 @@
             <span>PharmaGuardian <span class="text-emerald-500">AI</span></span>
         </div>
         <div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-400">
-            <a href="#" class="hover:text-emerald-400 transition">Chat With AI</a>
-            <a href="#" class="hover:text-emerald-400 transition">Admin Dashboard</a>
+            <a href="#" onclick="navigateTo('chat')" class="hover:text-emerald-400 transition">Chat With AI</a>
+            <a href="#" onclick="navigateTo('admin')" class="hover:text-emerald-400 transition">Admin Dashboard</a>
             <a href="#" class="text-emerald-400">Learn More</a>
             <button class="bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full transition">
                 Login
@@ -49,11 +49,11 @@
         </p>
 
         <div class="flex space-x-4 mb-16">
-            <button class="bg-emerald-500 hover:bg-emerald-600 text-black font-bold px-8 py-3 rounded-lg flex items-center space-x-2 transition">
+            <button onclick="navigateTo('chat')" class="bg-emerald-500 hover:bg-emerald-600 text-black font-bold px-8 py-3 rounded-lg flex items-center space-x-2 transition">
                 <i class="fas fa-comment"></i>
                 <span>Launch AI Consultation</span>
             </button>
-            <button class="bg-gray-800/50 hover:bg-gray-700 text-white font-bold px-8 py-3 rounded-lg transition border border-gray-700">
+            <button onclick="navigateTo('logs')" class="bg-gray-800/50 hover:bg-gray-700 text-white font-bold px-8 py-3 rounded-lg transition border border-gray-700">
                 View Trace Logs
             </button>
         </div>
@@ -110,5 +110,6 @@
         </p>
     </footer>
 
+    <script src="js/main.js"></script>
 </body>
 </html>
